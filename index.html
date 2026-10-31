@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LUNAR OS — Moon Knight Intelligence System</title>
+<meta name="description" content="LUNAR OS: a supernatural intelligence operating system inspired by Moon Knight. Fictional demonstration project.">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="moon-halo" aria-hidden="true"></div>
+
+<div class="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <defs><radialGradient id="lg1" cx="35%" cy="30%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#b9b4e8"/></radialGradient></defs>
+        <path d="M30 6a18 18 0 1 0 12 30A15 15 0 0 1 30 6z" fill="url(#lg1)"/>
+        <path d="M8 24s6-8 16-8 16 8 16 8-6 8-16 8S8 24 8 24z" fill="none" stroke="#8b7bff" stroke-width="1.6" opacity=".9"/>
+        <circle cx="24" cy="24" r="3.2" fill="#8b7bff"/>
+      </svg>
+      <div class="brand-text"><b>LUNAR OS</b><small>NIGHTWATCH · v1.0</small></div>
+    </div>
+
+    <nav class="nav" id="nav" aria-label="Main navigation">
+      <button class="nav-btn active" data-target="command" aria-current="page">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+        <span>Command Center</span>
+      </button>
+      <button class="nav-btn" data-target="khonshu">
+        <svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M12 15v5"/></svg>
+        <span>Khonshu AI</span>
+      </button>
+      <button class="nav-btn" data-target="relic">
+        <svg viewBox="0 0 24 24"><path d="M12 2l8 7-8 13L4 9z"/><path d="M4 9h16M12 2v20"/></svg>
+        <span>Relic Scanner</span>
+      </button>
+      <button class="nav-btn" data-target="mission">
+        <svg viewBox="0 0 24 24"><path d="M5 3v18M5 4h12l-2 4 2 4H5"/></svg>
+        <span>Mission Control</span>
+      </button>
+      <button class="nav-btn" data-target="lunar">
+        <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+        <span>Lunar Protocol</span>
+      </button>
+    </nav>
+
+    <div class="side-foot">
+      <div class="sys"><i class="dot"></i> NIGHTWATCH ONLINE</div>
+      <p>Fictional, character-inspired project. Not affiliated with Marvel.</p>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+    <header class="topbar">
+      <div class="tagline">
+        <span class="eyebrow">KHONSHU PROTOCOL // ACTIVE</span>
+        <h1>The Night Has Eyes. <em>The Moon Has Memory.</em></h1>
+      </div>
+      <div class="top-actions">
+        <div class="clock" aria-label="Live clock">
+          <b id="clockLocal">--:--:--</b>
+          <small><span id="clockDate"></span> · NYC <span id="clockNY">--:--:--</span></small>
+        </div>
+        <button class="icon-btn" id="soundBtn" aria-pressed="false" title="Toggle sound" aria-label="Toggle sound">
+          <svg viewBox="0 0 24 24" id="soundIcon"><path d="M4 9v6h4l5 4V5L8 9z"/><path class="waves" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>
+        </button>
+        <button class="btn primary" id="demoBtn">
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> INITIATE DEMO
+        </button>
+      </div>
+    </header>
+
+    <div id="demoBanner" class="demo-banner" hidden>
+      <span class="dot"></span><span id="demoText">DEMONSTRATION MODE</span>
+    </div>
+
+    <!-- ========== 1. COMMAND CENTER ========== -->
+    <section class="view active" id="view-command" aria-labelledby="h-command">
+      <div class="view-head"><h2 id="h-command">Nightwatch Command Center</h2><p>Live overview of fictional supernatural activity across New York.</p></div>
+
+      <div class="stats">
+        <article class="panel stat moon-stat">
+          <div class="mini-moon" id="miniMoon"></div>
+          <div><small>CURRENT MOON PHASE</small><b id="statPhase">—</b><span id="statIllum">—</span></div>
+        </article>
+        <article class="panel stat">
+          <div><small>ACTIVE THREATS</small><b class="big" id="statThreats">0</b><span id="statThreatLevel">—</span></div>
+        </article>
+        <article class="panel stat">
+          <div><small>MISSION STATUS</small><b class="big" id="statMissions">0</b><span id="statMissionSub">—</span></div>
+        </article>
+        <article class="panel stat">
+          <div><small>LUNAR ACTIVITY <i class="tag">SIM</i></small><b class="big" id="statActivity">0%</b><span id="statActivityLbl">—</span></div>
+        </article>
+      </div>
+
+      <div class="grid-cmd">
+        <article class="panel map-panel">
+          <div class="panel-head"><h3>New York Incident Map</h3><span class="tag">FICTIONAL · SCHEMATIC</span></div>
+          <div class="map-wrap">
+            <svg id="nyMap" viewBox="0 0 400 500" role="img" aria-label="Schematic map of fictional incidents in New York">
+              <defs>
+                <pattern id="mgrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="rgba(160,150,255,.09)" stroke-width="1"/></pattern>
+                <linearGradient id="land" x1="0" x2="1"><stop offset="0" stop-color="rgba(139,123,255,.20)"/><stop offset="1" stop-color="rgba(223,228,242,.10)"/></linearGradient>
+              </defs>
+              <rect width="400" height="500" fill="url(#mgrid)"/>
+              <g class="rings"><circle cx="200" cy="250" r="70"/><circle cx="200" cy="250" r="140"/><circle cx="200" cy="250" r="210"/></g>
+              <!-- Jersey / Brooklyn / Queens masses -->
+              <path class="land" d="M0 120 L95 140 L110 260 L90 380 L0 420Z"/>
+              <path class="land" d="M290 330 L400 300 L400 500 L230 500 L215 440Z"/>
+              <path class="land" d="M300 130 L400 110 L400 280 L300 300Z"/>
+              <!-- Manhattan -->
+              <path class="land main-island" d="M170 20 L215 30 L235 90 L250 160 L265 230 L270 300 L250 380 L225 450 L190 480 L165 440 L150 360 L140 290 L130 220 L125 150 L140 80Z"/>
+              <path class="streets" d="M150 90 L235 110 M140 150 L248 175 M132 215 L262 240 M142 290 L268 305 M152 360 L252 378 M200 30 L180 470"/>
+              <text x="190" y="260" class="map-label" text-anchor="middle" transform="rotate(-82 190 260)">MANHATTAN</text>
+              <text x="330" y="415" class="map-label" text-anchor="middle">BROOKLYN</text>
+              <text x="350" y="205" class="map-label" text-anchor="middle">QUEENS</text>
+              <text x="45" y="280" class="map-label" text-anchor="middle">NEW JERSEY</text>
+              <g id="markers"></g>
+              <g class="radar"><line x1="200" y1="250" x2="200" y2="30"/></g>
+            </svg>
+          </div>
+          <div class="map-detail" id="mapDetail" aria-live="polite"><p class="muted">Select a marker to inspect an incident.</p></div>
+        </article>
+
+        <article class="panel alerts-panel">
+          <div class="panel-head"><h3>Recent Supernatural Alerts</h3><span class="tag" id="alertCount">0</span></div>
+          <ul class="alerts" id="alertList"></ul>
+        </article>
+      </div>
+
+      <div class="grid-2">
+        <article class="panel">
+          <div class="panel-head"><h3>Threat Severity Indicators</h3><span class="tag">LIVE</span></div>
+          <div id="sevBars" class="sev-bars"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><h3>Active Missions</h3><button class="link-btn" data-goto="mission">Open Mission Control →</button></div>
+          <ul class="mini-missions" id="miniMissions"></ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== 2. KHONSHU AI ========== -->
+    <section class="view" id="view-khonshu" aria-labelledby="h-khonshu">
+      <div class="view-head"><h2 id="h-khonshu">Khonshu AI <small>Investigation Assistant</small></h2><p>Describe a strange incident. Khonshu will classify it, rate the threat and plan the investigation.</p></div>
+
+      <div class="engine-note" role="note">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <div><b>LOCAL DEMONSTRATION ENGINE.</b> This analysis is produced by a transparent, rule-based keyword engine running in your browser with scenario templates and the sample case ledger. It is <u>not</u> generated by a real AI model.</div>
+      </div>
+
+      <div class="grid-kh">
+        <article class="panel">
+          <form id="khForm" novalidate>
+            <label for="incidentInput" class="lbl">INCIDENT DESCRIPTION</label>
+            <textarea id="incidentInput" rows="6" maxlength="1200" placeholder="e.g. Three people disappeared near an abandoned museum. Strange Egyptian symbols were found on the walls."></textarea>
+            <div class="row between"><small class="err" id="khErr" role="alert"></small><small class="muted"><span id="khCount">0</span>/1200</small></div>
+            <div class="chips" aria-label="Example incidents">
+              <button type="button" class="chip" data-ex="Three people disappeared near an abandoned museum. Strange Egyptian symbols were found on the walls.">Museum disappearances</button>
+              <button type="button" class="chip" data-ex="Residents in a Queens apartment block share the same nightmare each night and wake up whispering in an unknown language. One neighbour sleepwalked onto the roof.">Shared nightmares</button>
+              <button type="button" class="chip" data-ex="Robed figures chanting around a circle of candles under a pier at midnight. Blood on the planks and an altar made from a stone statue.">Midnight ritual</button>
+              <button type="button" class="chip" data-ex="A dockworker found a glowing crate with an amulet inside. Every dog in the harbor started to howl and jackal-like footprints appeared on the pier.">Glowing crate</button>
+            </div>
+            <div class="row gap">
+              <button class="btn primary" type="submit" id="khSubmit">ANALYZE INCIDENT</button>
+              <button class="btn ghost" type="button" id="khClear">Clear</button>
+            </div>
+            <small class="muted hint">Tip: Ctrl + Enter to submit.</small>
+          </form>
+        </article>
+
+        <article class="panel side-info">
+          <div class="panel-head"><h3>How the engine works</h3></div>
+          <ol class="how">
+            <li>Scans your text for signals across 8 supernatural categories.</li>
+            <li>Weights matches and urgency words to score the threat.</li>
+            <li>Cross-references the live case ledger for shared signatures.</li>
+            <li>Composes a report from scenario templates.</li>
+          </ol>
+          <p class="muted small">Ledger cases loaded: <b id="ledgerCount">0</b></p>
+        </article>
+      </div>
+
+      <div id="loader" class="loader panel" hidden>
+        <div class="phase-loader" aria-hidden="true"></div>
+        <div class="loader-body">
+          <b id="loaderText">Opening the archive…</b>
+          <div class="gauge"><i id="loaderBar"></i></div>
+          <small class="muted">Local engine · no network request is made</small>
+        </div>
+      </div>
+
+      <div id="report" class="report" hidden aria-live="polite"></div>
+    </section>
+
+    <!-- ========== 3. RELIC SCANNER ========== -->
+    <section class="view" id="view-relic" aria-labelledby="h-relic">
+      <div class="view-head"><h2 id="h-relic">Relic Scanner</h2><p>Upload a photo of an object. LUNAR OS will run a fictional artifact analysis.</p></div>
+
+      <div class="engine-note" role="note">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <div><b>SIMULATED ANALYSIS.</b> No vision API is connected, so no real image recognition happens. The fictional result is generated from the file's metadata and average brightness. The same image always gives the same result.</div>
+      </div>
+
+      <div class="grid-relic">
+        <article class="panel">
+          <label class="dropzone" id="dropzone" for="relicFile" tabindex="0">
+            <input type="file" id="relicFile" accept="image/*" hidden>
+            <svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4"/></svg>
+            <b>Drop an image here or click to browse</b>
+            <small>PNG, JPG, WEBP, GIF · up to 8 MB</small>
+          </label>
+          <small class="err" id="relicErr" role="alert"></small>
+          <div class="scan-stage" id="scanStage" hidden>
+            <img id="relicImg" alt="Uploaded relic preview">
+            <div class="scan-grid"></div>
+            <div class="scan-line"></div>
+            <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+            <div class="scan-status" id="scanStatus">SCANNING…</div>
+          </div>
+          <div class="gauge scan-gauge" id="scanGaugeWrap" hidden><i id="scanBar"></i></div>
+          <div class="row gap" id="relicActions" hidden>
+            <button class="btn ghost" id="relicReset" type="button">Scan another relic</button>
+          </div>
+        </article>
+
+        <article class="panel" id="relicResultPanel">
+          <div class="panel-head"><h3>Artifact Analysis</h3><span class="tag">SIMULATED</span></div>
+          <div id="relicResult" class="relic-result"><p class="muted">Awaiting a relic. Upload an image to begin the scan.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== 4. MISSION CONTROL ========== -->
+    <section class="view" id="view-mission" aria-labelledby="h-mission">
+      <div class="view-head"><h2 id="h-mission">Mission Control</h2><p>Plan, track and close operations. Saved automatically in this browser.</p></div>
+
+      <div class="grid-mission">
+        <article class="panel">
+          <div class="panel-head"><h3>New Mission</h3></div>
+          <form id="missionForm" novalidate>
+            <label class="lbl" for="mName">MISSION NAME</label>
+            <input id="mName" type="text" maxlength="60" autocomplete="off" placeholder="Operation Midnight Vault">
+            <small class="err" id="mNameErr" role="alert"></small>
+
+            <label class="lbl" for="mLoc">LOCATION</label>
+            <input id="mLoc" type="text" maxlength="60" autocomplete="off" placeholder="Hargrove Museum, Lower Manhattan">
+            <small class="err" id="mLocErr" role="alert"></small>
+
+            <div class="two">
+              <div>
+                <label class="lbl" for="mPri">PRIORITY</label>
+                <select id="mPri"><option>Critical</option><option>High</option><option selected>Medium</option><option>Low</option></select>
+              </div>
+              <div>
+                <label class="lbl" for="mStatus">STATUS</label>
+                <select id="mStatus"><option>Planned</option><option>Active</option><option>On Hold</option></select>
+              </div>
+            </div>
+            <button class="btn primary wide" type="submit">CREATE MISSION</button>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <h3>Operations</h3>
+            <div class="tabs" id="missionTabs" role="tablist">
+              <button class="tab active" data-filter="all" role="tab">All</button>
+              <button class="tab" data-filter="open" role="tab">Open</button>
+              <button class="tab" data-filter="done" role="tab">Completed</button>
+            </div>
+          </div>
+          <ul class="missions" id="missionList"></ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ========== 5. LUNAR PROTOCOL ========== -->
+    <section class="view" id="view-lunar" aria-labelledby="h-lunar">
+      <div class="view-head"><h2 id="h-lunar">Lunar Protocol</h2><p>Khonshu's power follows the moon. Inspect any date.</p></div>
+
+      <div class="grid-lunar">
+        <article class="panel moon-big">
+          <div class="big-moon" id="lunarMoon"></div>
+          <h3 id="lunarPhase">—</h3>
+          <p class="muted" id="lunarDate">—</p>
+          <div class="row gap center">
+            <input type="date" id="lunarDateInput" aria-label="Choose a date">
+            <button class="btn ghost" id="lunarToday" type="button">Today</button>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head"><h3>Lunar Data</h3></div>
+          <dl class="facts">
+            <div><dt>Illumination (estimate)</dt><dd id="lunarIllum">—</dd></div>
+            <div><dt>Moon age</dt><dd id="lunarAge">—</dd></div>
+            <div><dt>Next full moon</dt><dd id="lunarFull">—</dd></div>
+            <div><dt>Next new moon</dt><dd id="lunarNew">—</dd></div>
+          </dl>
+          <div class="activity">
+            <div class="panel-head"><h3>Supernatural Activity</h3><span class="tag warn">FICTIONAL SIMULATION</span></div>
+            <div class="row between"><b class="act-val" id="lunarAct">0%</b><span id="lunarActLbl" class="muted">—</span></div>
+            <div class="gauge big"><i id="lunarActBar"></i></div>
+            <p class="muted small">This indicator is invented for the LUNAR OS story world. It is not a measurement and has no scientific basis.</p>
+          </div>
+        </article>
+      </div>
+
+      <article class="panel">
+        <div class="panel-head"><h3>7-Day Outlook</h3><span class="tag warn">FICTIONAL SIMULATION</span></div>
+        <div class="week" id="lunarWeek"></div>
+      </article>
+    </section>
+
+    <footer class="footer">LUNAR OS · A fictional, character-inspired hackathon project · Moon phase math is a real astronomical estimate; all incidents, relics and activity levels are invented.</footer>
+  </main>
+</div>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<script src="script.js"></script>
+</body>
+</html>
